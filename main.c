@@ -32,9 +32,20 @@ void increment(const char* id, const char* req, void* arg)
     webview_return(context->w, id, 0, result);
 }
 
+/*
+ * noob approach to navigate to another view
+ */
+void link(const char* id, const char* req, void* arg)
+{
+    const context_t* ctx = (context_t*) arg;
+    // by setting the page without resolving current promise, resources myt leak, idk 4 sure.
+    webview_set_html(ctx->w, second);
+    webview_return(ctx->w, id, 0, "");
+}
+
 int main()
 {
-    const webview_t window = webview_create((int)DEBUG, NULL);
+    const webview_t window = webview_create((int)DEBUG, NULL); // NOLINT(*-misplaced-const)
 
     webview_set_title(window, "cauri-test");
     webview_set_size(window, 640, 480, WEBVIEW_HINT_NONE);
@@ -45,6 +56,7 @@ int main()
 
     // bind methods
     webview_bind(window, "incr", increment, &context);
+    webview_bind(window, "next", link, &context);
 
     // init window with homepage
     webview_set_html(window, home);

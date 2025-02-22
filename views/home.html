@@ -1,9 +1,16 @@
+<!--suppress JSUnresolvedReference -->
 <p id="id">0</p>
 <button id="btn">Incr</button>
+<button id="link">Next</button>
+
 <script>
     const id = document.querySelector("#id");
     const btn = document.querySelector("#btn");
+    const link = document.querySelector("#link");
 
+    link.addEventListener("click", async function () {
+        id.textContent = await window.next();
+    });
     btn.addEventListener("click", async function () {
         id.textContent = await window.incr();
     });
