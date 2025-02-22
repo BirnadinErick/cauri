@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
-project(cauri LANGUAGES CXX)
+project(cauri LANGUAGES C CXX) 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
+find_package(Threads REQUIRED)
 include(FetchContent)
 
 FetchContent_Declare(
@@ -29,10 +30,10 @@ foreach (FILE ${VIEW_FILES})
     string(REPLACE "-" "_" VIEW_NAME ${VIEW_NAME})
     string(REPLACE ")\"html" ")\\\"html" VIEW_CONTENT "${VIEW_CONTENT}")
 
-    file(APPEND ${OUTPUT_HEADER} "constexpr const char ${VIEW_NAME}[] = R\"html(${VIEW_CONTENT})html\";\n\n")
+    file(APPEND ${OUTPUT_HEADER} "const char ${VIEW_NAME}[] = R\"html(${VIEW_CONTENT})html\";\n\n")
 endforeach ()
 
 add_executable(cauri WIN32)
-target_sources(cauri PRIVATE ${PROJECT_SOURCE_DIR}/main.cpp)
+target_sources(cauri PRIVATE ${PROJECT_SOURCE_DIR}/main.c)
 target_include_directories(cauri PRIVATE ${CMAKE_BINARY_DIR})
-target_link_libraries(cauri PRIVATE webview::core)
+target_link_libraries(cauri PRIVATE webview::core_static Threads::Threads)
