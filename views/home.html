@@ -1,0 +1,10 @@
+<p id="id">0</p>
+<button id="btn">Incr</button>
+<script>
+    const id = document.querySelector("#id");
+    const btn = document.querySelector("#btn");
+
+    btn.addEventListener("click", async function () {
+        id.textContent = await window.incr();
+    });
+</script>
