@@ -1,7 +1,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "views.h"
+#include <string.h>
+#include "cJSON/cJSON.h"
+#include "views.c"
 #include "webview/webview.h"
 
 const bool DEBUG = true;
@@ -34,12 +36,29 @@ void increment(const char* id, const char* req, void* arg)
 
 /*
  * noob approach to navigate to another view
+ * TODO: return error to the frontend and log it. instead of crashing the app
  */
-void link(const char* id, const char* req, void* arg)
+void route(const char* id, const char* req, void* arg)
 {
-    const context_t* ctx = (context_t*) arg;
-    // by setting the page without resolving current promise, resources myt leak, idk 4 sure.
-    webview_set_html(ctx->w, second);
+    const context_t* ctx = (context_t*)arg;
+
+    const cJSON* req_json = cJSON_Parse(req);
+    if (req_json == NULL && !cJSON_IsArray(req_json))
+    {
+        perror("failed to parse request json");
+        exit(EXIT_FAILURE);
+    }
+
+    const cJSON* route = cJSON_GetArrayItem(req_json, 0);
+    if (!cJSON_IsString(route) && route->valuestring == NULL)
+    {
+        perror("empty argument passed from frontend");
+        exit(EXIT_FAILURE);
+    }
+
+    webview_set_html(ctx->w, get_view_html(route->valuestring));
+
+    cJSON_Delete((cJSON*)req_json);
     webview_return(ctx->w, id, 0, "");
 }
 
@@ -56,7 +75,7 @@ int main()
 
     // bind methods
     webview_bind(window, "incr", increment, &context);
-    webview_bind(window, "next", link, &context);
+    webview_bind(window, "route", route, &context);
 
     // init window with homepage
     webview_set_html(window, home);
