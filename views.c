@@ -1,6 +1,6 @@
 #include <string.h>
 
-const char* HOME = R"html(
+const char* HOME= R"html( <!--suppress JSUnresolvedReference -->
 <p id="id">0</p>
 <button id="btn">Incr</button>
 <button id="link">Next</button>
@@ -26,17 +26,10 @@ const char* HOME = R"html(
 
 </script> )html";
 
-const char* SECOND = R"html( <p>second page</p> )html";
+const char* SECOND= R"html( <p>second page</p> )html";
 
-const char* get_view_html(const char* route)
-{
-    if (strncmp(route, HOME, 4) == 0)
-    {
-        return HOME;
-    }
-    if (strncmp(route, SECOND, 6) == 0)
-    {
-        return SECOND;
-    }
-    return "Page not found";
+const char* get_view_html(const char* route) {
+if (strncmp(route, "HOME", 4) == 0) { return HOME;}
+if (strncmp(route, "SECOND", 6) == 0) { return SECOND;}
+return "Page not found";
 }

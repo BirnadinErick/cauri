@@ -42,7 +42,7 @@ if __name__ == "__main__":
         views = get_formatted_filenames(directory)
         view_impls = [f"const char* {name}= R\"html( {content} )html\";" for name, content in views.items()]
         view_router = [
-            "if (strncmp(route, " + file + ", " + str(len(file)) + ") == 0) { return " + file + ";}"
+            "if (strncmp(route, \"" + file + "\", " + str(len(file)) + ") == 0) { return " + file + ";}"
             for file in views.keys()
         ]
 
